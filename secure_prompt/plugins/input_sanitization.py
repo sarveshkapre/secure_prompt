@@ -1,4 +1,3 @@
-# secure_prompt/secure_prompt/plugins/input_sanitization.py
 import re
 from html import escape
 
@@ -15,8 +14,6 @@ class InputSanitization:
         sanitized_input = escape(input)
         for symbol in self.harmful_symbols:
             sanitized_input = sanitized_input.replace(symbol, "")
-        if not self.validate(sanitized_input):
-            raise Exception("The input contains harmful content.")
         return sanitized_input
 
     def validate(self, input):
@@ -24,3 +21,9 @@ class InputSanitization:
             if compiled_pattern.search(input):
                 return False
         return True
+
+    def process_prompt(self, input):
+        sanitized_input = self.sanitize(input)
+        if not self.validate(sanitized_input):
+            raise Exception("The input contains harmful content.")
+        return sanitized_input
