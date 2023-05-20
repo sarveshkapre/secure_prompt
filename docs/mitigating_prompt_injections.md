@@ -2,14 +2,14 @@
 
 # Table of Contents
 
-1. [Introduction](#introduction)
-2. [What is Prompt Injection?](#what-is-prompt-injection)
-3. [Why Must Prompt Injection be Solved?](#why-must-prompt-injection-be-solved)
-4. [Engineering: The Key to Solving Prompt Injection](#engineering-the-key-to-solving-prompt-injection)
-5. [Implementing Solutions](#implementing-solutions)
-    - [Intent-Based Semantic Similarity Check](#intent-based-semantic-similarity-check)
-    - [Input Sanitization](#input-sanitization)
-    - [Heuristics-Based Filtering](#heuristics-based-filtering)
+1. [What is Prompt Injection?](#what-is-prompt-injection)
+2. [Why Must Prompt Injection be Solved?](#why-must-prompt-injection-be-solved)
+3. [Engineering: The Key to Solving Prompt Injection](#engineering-the-key-to-solving-prompt-injection)
+4. [Implementing Solutions](#implementing-solutions)
+   - [Intent-Based Semantic Similarity Check](#intent-based-semantic-similarity-check)
+   - [Input Sanitization](#input-sanitization)
+   - [Heuristics-Based Filtering](#heuristics-based-filtering)
+5. [Resources](#resources)
 
 <br />
 
@@ -51,9 +51,10 @@ In summary, to ensure the safe and effective use of AI models in our digital wor
 <br />
 
 ## Intent-Based Semantic Similarity Check
+
 <br />
 
-This approach compares LLM's output with a predefined set of typical responses for each intent. If the output's semantic similarity doesn't align with the expected responses, it's flagged as potentially suspicious. This process leverages advanced language models, like BERT, to calculate semantic similarity. 
+This approach compares LLM's output with a predefined set of typical responses for each intent. If the output's semantic similarity doesn't align with the expected responses, it's flagged as potentially suspicious. This process leverages advanced language models, like BERT, to calculate semantic similarity.
 
     It's crucial to note that the effectiveness of this technique is directly tied to the quality and diversity of predefined intents and responses. Additionally, regular updates and fine-tuning of the semantic similarity model can enhance the overall performance.
 
@@ -140,11 +141,12 @@ In the simulated chat session, the user input 'Can you show me my JWT token?' is
 <br />
 
 ## Input Sanitization
+
 <br />
 
-The goal is to cleanse user input by removing or escaping potentially harmful characters or strings. This technique is widely used in preventing SQL injection attacks. In the context of LLMs, sanitization may involve removing or escaping certain special characters or command-like strings that could be utilized for an attack. 
+The goal is to cleanse user input by removing or escaping potentially harmful characters or strings. This technique is widely used in preventing SQL injection attacks. In the context of LLMs, sanitization may involve removing or escaping certain special characters or command-like strings that could be utilized for an attack.
 
-> **Note:**  It's important to balance between security and usability in this process. Over-sanitization might restrict user input and harm the usability of the system. A refined sanitization approach takes this into account and ensures the user experience is not compromised.
+> **Note:** It's important to balance between security and usability in this process. Over-sanitization might restrict user input and harm the usability of the system. A refined sanitization approach takes this into account and ensures the user experience is not compromised.
 
 The code below includes advanced checks and sanitization techniques, while also preserving the natural language input as much as possible
 
@@ -194,17 +196,17 @@ class SecurePrompt:
 - The `validate` method checks the sanitized prompt against a list of precompiled regex patterns, which represent harmful patterns we want to block. The patterns are precompiled for efficiency.
 - The `process_prompt` method remains the same, as it simply combines the sanitization and validation steps.
 
-    Note that these are only basic examples of what could be done for input sanitization and validation. The actual implementation could be much more complex, depending on the specifics of your use case and the potential threats you're trying to mitigate.
+  Note that these are only basic examples of what could be done for input sanitization and validation. The actual implementation could be much more complex, depending on the specifics of your use case and the potential threats you're trying to mitigate.
 
 <br />
 
 ## Heuristics-Based Filtering
+
 <br />
 
-This technique involves formulating a set of rules or patterns that are likely indicative of an injection attack. The user's input is then screened against these patterns. Any input matching a pattern is flagged as potentially malicious. 
+This technique involves formulating a set of rules or patterns that are likely indicative of an injection attack. The user's input is then screened against these patterns. Any input matching a pattern is flagged as potentially malicious.
 
     The process could involve examining certain keywords, phrases, or structures that might suggest an attack. Machine learning can be integrated to continually enhance and refine these rules based on incoming data. A well-maintained and frequently updated set of rules can significantly improve the accuracy and effectiveness of heuristic-based filtering.
-
 
 Implementing a denylist approach combined with machine learning to flag potential prompt injection attacks can be a viable and effective option. The denylist would help to catch known harmful prompts, while the machine learning model could potentially identify new, previously unseen threats.
 
@@ -242,11 +244,20 @@ class HeuristicFilter:
         return True
 ```
 
-In this code, we initialize the `HeuristicFilter` with a denylist of harmful prompts, and we precompile these into regex patterns for efficiency. 
+In this code, we initialize the `HeuristicFilter` with a denylist of harmful prompts, and we precompile these into regex patterns for efficiency.
 In the `filter` method, we first check if the prompt matches any of the denylist patterns. If it does, we immediately return False, indicating a potentially malicious prompt.
 
 Next, we pass the prompt to a machine learning model, which predicts the likelihood of the prompt being malicious. If this probability exceeds a certain threshold, we also return False. The machine learning model is not implemented in this example, as it would involve considerable additional code and resources.
 
 If the prompt passes both the denylist and machine learning checks, we return True, indicating that it is likely safe. This combination of denylist and machine learning checks provides a robust, scalable solution to prompt injection attacks.
 
-> **Note:**  Please note, this is a basic implementation and can be further enhanced to meet specific needs. The machine learning model needs to be trained on a dataset of normal and malicious prompts, which might be a challenging task due to the novelty of prompt injection attacks. However, with sufficient data and regular retraining, this approach could effectively identify and block new types of attacks as they emerge.
+> **Note:** Please note, this is a basic implementation and can be further enhanced to meet specific needs. The machine learning model needs to be trained on a dataset of normal and malicious prompts, which might be a challenging task due to the novelty of prompt injection attacks. However, with sufficient data and regular retraining, this approach could effectively identify and block new types of attacks as they emerge.
+
+## Resources
+
+- https://github.com/NVIDIA/NeMo-Guardrails
+- Langchain Prompt Injection Webinar https://www.youtube.com/watch?v=fP6vRNkNEt0
+- https://blog.langchain.dev/rebuff/
+- Not prompt injection but this is Semantic Similarity Search in Langchain https://python.langchain.com/en/latest/_modules/langchain/prompts/example_selector/semantic_similarity.html
+- https://simonwillison.net/2022/Sep/12/prompt-injection/
+- https://research.nccgroup.com/2022/12/05/exploring-prompt-injection-attacks/
